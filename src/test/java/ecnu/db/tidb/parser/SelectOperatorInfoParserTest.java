@@ -1,4 +1,4 @@
-package ecnu.db.tidb.parser;
+package ecnu.db.parser;
 
 import ecnu.db.constraintchain.filter.SelectResult;
 import java_cup.runtime.ComplexSymbolFactory;
@@ -9,11 +9,11 @@ import java.io.StringReader;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TidbSelectOperatorInfoParserTest {
-    private final TidbSelectOperatorInfoLexer lexer = new TidbSelectOperatorInfoLexer(new StringReader(""));
-    private final TidbSelectOperatorInfoParser parser = new TidbSelectOperatorInfoParser(lexer, new ComplexSymbolFactory());
+class SelectOperatorInfoParserTest {
+    private final SelectOperatorInfoLexer lexer = new SelectOperatorInfoLexer(new StringReader(""));
+    private final SelectOperatorInfoParser parser = new SelectOperatorInfoParser(lexer, new ComplexSymbolFactory());
 
-    @DisplayName("test TidbSelectOperatorInfoParser.parse method with arithmetic ops")
+    @DisplayName("test SelectOperatorInfoParser.parse method with arithmetic ops")
     @Test
     void testParseWithArithmeticOps() throws Exception {
         String testCase = "ge(mul(db.table.col1, plus(db.table.col2, 3)), 2)";
@@ -26,7 +26,7 @@ class TidbSelectOperatorInfoParserTest {
         assertTrue(result.getCondition().evaluate());
     }
 
-    @DisplayName("test TidbSelectOperatorInfoParser.parse method with logical ops")
+    @DisplayName("test SelectOperatorInfoParser.parse method with logical ops")
     @Test
     void testParseWithLogicalOps() throws Exception {
         String testCase = "or(ge(db.table.col1, 2), lt(db.table.col4, 3.0))";
@@ -36,7 +36,7 @@ class TidbSelectOperatorInfoParserTest {
         assertTrue(result.getCondition().evaluate());
     }
 
-    @DisplayName("test TidbSelectOperatorInfoParser.parse method with erroneous grammar")
+    @DisplayName("test SelectOperatorInfoParser.parse method with erroneous grammar")
     @Test()
     void testParseWithLogicalOpsFailed() {
         assertThrows(Exception.class, () -> {
@@ -45,7 +45,7 @@ class TidbSelectOperatorInfoParserTest {
         });
     }
 
-    @DisplayName("test TidbSelectOperatorInfoParser.parse method with not")
+    @DisplayName("test SelectOperatorInfoParser.parse method with not")
     @Test()
     void testParseWithNot() throws Exception {
         String testCase = "or(ge(db.table.col1, 2), not(in(db.table.col3, \"3\", \"2\")))";
@@ -55,7 +55,7 @@ class TidbSelectOperatorInfoParserTest {
         assertTrue(result.getCondition().evaluate());
     }
 
-    @DisplayName("test TidbSelectOperatorInfoParser.parse method with isnull")
+    @DisplayName("test SelectOperatorInfoParser.parse method with isnull")
     @Test()
     void testParseWithIsnull() throws Exception {
         String testCase = "or(ge(db.table.col1, 2), not(isnull(db.table.col2)))";
@@ -65,7 +65,7 @@ class TidbSelectOperatorInfoParserTest {
         assertFalse(result.getCondition().evaluate());
     }
 
-    @DisplayName("test TidbSelectOperatorInfoParser.parse method with like")
+    @DisplayName("test SelectOperatorInfoParser.parse method with like")
     @Test()
     void testParseLike() throws Exception {
         String testCase = "like(db.table.col1, \"%hello\")";

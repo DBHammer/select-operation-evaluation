@@ -129,7 +129,7 @@ not_arguments = like_compare_expr | in_compare_expr | isnull_expr
 在class path中，引入sql-operator-evaluation-{version}.jar包即可使用，请在release页面下载jar包，使用方式如下
 
 ```java
-import ecnu.db.OperatorEvaluation;
+import ecnu.db.OperationEvaluation;
 import ecnu.db.constraintchain.filter.SelectResult;
 
 public class Main {
@@ -137,7 +137,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         // db.table.col1 * (db.table.col2 + 3) >= 2 ?
-        SelectResult result = OperatorEvaluation.getEvaluation("ge(mul(db.table.col1, plus(db.table.col2, 3)), 2)");
+        SelectResult result = OperationEvaluation.getEvaluation("ge(mul(db.table.col1, plus(db.table.col2, 3)), 2)");
 
         result.getColumn("db.table.col1").setValue(3);
         result.getColumn("db.table.col2").setValue(2);
@@ -152,7 +152,7 @@ public class Main {
         System.out.println(result.getCondition().evaluate());
 
         // db.table.col1 >= 2 or db.table.col2 not isnull ?
-        result = OperatorEvaluation.getEvaluation("or(ge(db.table.col1, 2), not(isnull(db.table.col2)))");
+        result = OperationEvaluation.getEvaluation("or(ge(db.table.col1, 2), not(isnull(db.table.col2)))");
 
         result.getColumn("db.table.col1").setValue(1);
         result.getColumn("db.table.col2").setValue(null);

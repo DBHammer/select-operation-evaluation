@@ -31,4 +31,4 @@ dependency-reduced-pom.xml
 *.swp
 
 # ignore jflex generated files and idea backups
-src/main/java/ecnu/db/tidb/parser
+src/main/java/ecnu/db/parser

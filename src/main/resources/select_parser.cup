@@ -26,7 +26,7 @@ parser code {:
     this.columns = new HashMap<>();
     this.tableName = null;
     this.root = new AndNode();
-    ((TidbSelectOperatorInfoLexer) this.getScanner()).yyreset(new StringReader(operatorInfo));
+    ((SelectOperatorInfoLexer) this.getScanner()).yyreset(new StringReader(operatorInfo));
     this.parse();
     SelectResult result = new SelectResult();
     result.setParameters(this.parameters);

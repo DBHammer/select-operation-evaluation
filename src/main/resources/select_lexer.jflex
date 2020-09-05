@@ -1,13 +1,13 @@
-package ecnu.db.tidb.parser;
+package ecnu.db.parser;
 
-import ecnu.db.tidb.Token;
+import ecnu.db.constraintchain.Token;
 import java_cup.runtime.*;
 import ecnu.db.constraintchain.arithmetic.ArithmeticNodeType;
 import ecnu.db.constraintchain.filter.operation.CompareOperator;
 %%
 
 %public
-%class TidbSelectOperatorInfoLexer
+%class SelectOperatorInfoLexer
 /* throws UnsupportedOperationException */
 %yylexthrow{
 UnsupportedOperationException
@@ -28,12 +28,12 @@ UnsupportedOperationException
   }
 %}
 
-%implements TidbSelectSymbol
+%implements SelectSymbol
 %line
 %column
 %state STRING_LITERAL
 %unicode
-%cupsym TidbSelectSymbol
+%cupsym SelectSymbol
 %cup
 
 /* tokens */

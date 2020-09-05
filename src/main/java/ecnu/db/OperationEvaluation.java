@@ -1,15 +1,15 @@
 package ecnu.db;
 
 import ecnu.db.constraintchain.filter.SelectResult;
-import ecnu.db.tidb.parser.TidbSelectOperatorInfoLexer;
-import ecnu.db.tidb.parser.TidbSelectOperatorInfoParser;
+import ecnu.db.parser.SelectOperatorInfoLexer;
+import ecnu.db.parser.SelectOperatorInfoParser;
 import java_cup.runtime.ComplexSymbolFactory;
 
 import java.io.StringReader;
 
-public class OperatorEvaluation {
+public class OperationEvaluation {
     public static SelectResult getEvaluation(String expression) throws Exception {
-        return new TidbSelectOperatorInfoParser(new TidbSelectOperatorInfoLexer(new StringReader("")),
+        return new SelectOperatorInfoParser(new SelectOperatorInfoLexer(new StringReader("")),
                 new ComplexSymbolFactory()).parseSelectOperatorInfo(expression);
     }
 }
