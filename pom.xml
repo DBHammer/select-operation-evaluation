@@ -79,7 +79,7 @@
                         </goals>
                         <configuration>
                             <lexDefinitions>
-                                <definition>src/main/resources/select_lexer.jflex</definition>
+                                <definition>src/main/resources/tidb_select_lexer.jflex</definition>
                             </lexDefinitions>
                             <outputDirectory>src/main/java</outputDirectory>
                         </configuration>
@@ -100,7 +100,7 @@
                             <className>TidbSelectOperatorInfoParser</className>
                             <symbolsName>TidbSelectSymbol</symbolsName>
                             <packageName>ecnu.db.tidb.parser</packageName>
-                            <cupDefinition>src/main/resources/select_parser.cup</cupDefinition>
+                            <cupDefinition>src/main/resources/tidb_select_parser.cup</cupDefinition>
                             <outputDirectory>src/main/java</outputDirectory>
                         </configuration>
                     </execution>
