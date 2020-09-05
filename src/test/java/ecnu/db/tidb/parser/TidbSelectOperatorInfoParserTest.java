@@ -1,7 +1,6 @@
 package ecnu.db.tidb.parser;
 
 import ecnu.db.constraintchain.filter.SelectResult;
-import ecnu.db.constraintchain.filter.logical.AndNode;
 import java_cup.runtime.ComplexSymbolFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +40,7 @@ class TidbSelectOperatorInfoParserTest {
     @Test()
     void testParseWithLogicalOpsFailed() {
         assertThrows(Exception.class, () -> {
-            String testCase = "or(ge((db.table.col1), 2), mul(db.table.col2, 3))";
+            String testCase = "or(ge(db.table.col1, 2), mul(db.table.col2, 3))";
             parser.parseSelectOperatorInfo(testCase);
         });
     }
@@ -52,7 +51,7 @@ class TidbSelectOperatorInfoParserTest {
         String testCase = "or(ge(db.table.col1, 2), not(in(db.table.col3, \"3\", \"2\")))";
         SelectResult result = parser.parseSelectOperatorInfo(testCase);
         result.getColumn("db.table.col1").setValue(1);
-        result.getColumn("db.table.col3").setValue("5");
+        result.getColumn("db.table.col3").setValue(5);
         assertTrue(result.getCondition().evaluate());
     }
 
@@ -69,7 +68,7 @@ class TidbSelectOperatorInfoParserTest {
     @DisplayName("test TidbSelectOperatorInfoParser.parse method with like")
     @Test()
     void testParseLike() throws Exception {
-        String testCase = "like(db.table.col1, \"%hello\", 92)";
+        String testCase = "like(db.table.col1, \"%hello\")";
         SelectResult result = parser.parseSelectOperatorInfo(testCase);
         result.getColumn("db.table.col1").setValue("zzzhello");
         assertTrue(result.getCondition().evaluate());

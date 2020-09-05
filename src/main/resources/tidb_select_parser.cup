@@ -198,7 +198,7 @@ in_arguments ::=
                                                                                   :}
         ;
 like_compare_expr ::=
-        LIKE:like LPAREN CANONICAL_COLUMN_NAME:col STRING:str INTEGER RPAREN      {:
+        LIKE:like LPAREN CANONICAL_COLUMN_NAME:col STRING:str RPAREN      {:
                                                                                       String tableName = getCanonicalTableName(col);
                                                                                       verifyTableName(tableName);
                                                                                       ColumnNode columnNode = new ColumnNode(tableName, col.split("\\.")[2]);
