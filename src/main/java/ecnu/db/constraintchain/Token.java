@@ -1,6 +1,6 @@
-package ecnu.db.tidb;
+package ecnu.db.constraintchain;
 
-import ecnu.db.tidb.parser.TidbSelectSymbol;
+import ecnu.db.parser.SelectSymbol;
 import java_cup.runtime.ComplexSymbolFactory;
 
 /**
@@ -18,7 +18,7 @@ public class Token extends ComplexSymbolFactory.ComplexSymbol {
     }
 
     public Token(int type, int column, Object value) {
-        super(TidbSelectSymbol.terminalNames[type].toLowerCase(), type, new ComplexSymbolFactory.Location(1, column), new ComplexSymbolFactory.Location(1, column), value);
+        super(SelectSymbol.terminalNames[type].toLowerCase(), type, new ComplexSymbolFactory.Location(1, column), new ComplexSymbolFactory.Location(1, column), value);
         this.column = column;
     }
 
@@ -27,7 +27,7 @@ public class Token extends ComplexSymbolFactory.ComplexSymbol {
         return "column "
                 + column
                 + ", sym: "
-                + TidbSelectSymbol.terminalNames[this.sym].toLowerCase()
+                + SelectSymbol.terminalNames[this.sym].toLowerCase()
                 + (value == null ? "" : (", value: '" + value + "'"));
     }
 }

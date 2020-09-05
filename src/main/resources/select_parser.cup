@@ -26,7 +26,7 @@ parser code {:
     this.columns = new HashMap<>();
     this.tableName = null;
     this.root = new AndNode();
-    ((TidbSelectOperatorInfoLexer) this.getScanner()).yyreset(new StringReader(operatorInfo));
+    ((SelectOperatorInfoLexer) this.getScanner()).yyreset(new StringReader(operatorInfo));
     this.parse();
     SelectResult result = new SelectResult();
     result.setParameters(this.parameters);
@@ -198,7 +198,7 @@ in_arguments ::=
                                                                                   :}
         ;
 like_compare_expr ::=
-        LIKE:like LPAREN CANONICAL_COLUMN_NAME:col STRING:str INTEGER RPAREN      {:
+        LIKE:like LPAREN CANONICAL_COLUMN_NAME:col STRING:str RPAREN      {:
                                                                                       String tableName = getCanonicalTableName(col);
                                                                                       verifyTableName(tableName);
                                                                                       ColumnNode columnNode = new ColumnNode(tableName, col.split("\\.")[2]);
