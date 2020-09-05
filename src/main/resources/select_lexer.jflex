@@ -7,7 +7,7 @@ import ecnu.db.constraintchain.filter.operation.CompareOperator;
 %%
 
 %public
-%class SelectOperatorInfoLexer
+%class SelectOperationLexer
 /* throws UnsupportedOperationException */
 %yylexthrow{
 UnsupportedOperationException

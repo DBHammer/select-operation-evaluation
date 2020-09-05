@@ -1,6 +1,6 @@
-# SQL Operator Evaluation
+# SQL Operation Evaluation
 
-SQL Operator Evaluation（以下简称SOE）是一款SQL表达式计算工具，对给定的Operator表达式可快速计算输入数据在该Operator下的逻辑结果。SOE项目派生自[Touchstone For Cloud](https://github.com/DBHammer/TouchstoneToolChain), 对于给定的Operator支持单值计算和向量计算两种模式。单值计算通过设置一组给定值计算该Operator的逻辑状态，多值计算通过设置一组给定值的向量批量计算Operator的逻辑状态。
+SQL Operation Evaluation（以下简称SOE）是一款SQL表达式计算工具，对给定的Operator表达式可快速计算输入数据在该Operator下的逻辑结果。SOE项目派生自[Touchstone For Cloud](https://github.com/DBHammer/TouchstoneToolChain), 对于给定的Operator支持单值计算和向量计算两种模式。单值计算通过设置一组给定值计算该Operator的逻辑状态，多值计算通过设置一组给定值的向量批量计算Operator的逻辑状态。
 
 ## 表达式语法规则
 SOE使用波兰式的方式设置待计算的表达式，支持算数表达式，比较表达式和逻辑表达式三种。算数表达式支持四则运算，比较表达式支持常见的各种比较运算符，逻辑表达式支持and，or和not。下面给出相应的的语法规则。
@@ -72,7 +72,8 @@ uni_compare_constant = INTEGER｜FLOAT｜DATE｜STRING
 ```
 multi_compare_expr = in_compare_expr|like_compare_expr
 in_compare_expr = IN LPAREN CANONICAL_COLUMN_NAME in_arguments RPAREN
-in_arguments ::= STRING | in_arguments COMMA STRING    
+in_argument = INTEGER｜FLOAT｜DATE｜STRING
+in_arguments = in_argument | in_arguments COMMA in_argument
 like_compare_expr =  LIKE LPAREN CANONICAL_COLUMN_NAME COMMA STRING RPAREN
 ```
 
