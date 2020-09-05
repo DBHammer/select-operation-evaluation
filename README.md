@@ -67,8 +67,6 @@ uni_compare_constant = INTEGER｜FLOAT｜DATE｜STRING
 
 + 多值比较的语法规则
 
-  > in表达式的输入定义暂时只支持string，但是在计算时会对根据输入的数据列类型进行转换
-
 ```
 multi_compare_expr = in_compare_expr|like_compare_expr
 in_compare_expr = IN LPAREN CANONICAL_COLUMN_NAME in_arguments RPAREN
