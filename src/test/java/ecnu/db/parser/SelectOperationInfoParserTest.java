@@ -9,9 +9,9 @@ import java.io.StringReader;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SelectOperatorInfoParserTest {
-    private final SelectOperatorInfoLexer lexer = new SelectOperatorInfoLexer(new StringReader(""));
-    private final SelectOperatorInfoParser parser = new SelectOperatorInfoParser(lexer, new ComplexSymbolFactory());
+class SelectOperationParserTest {
+    private final SelectOperationLexer lexer = new SelectOperationLexer(new StringReader(""));
+    private final SelectOperationParser parser = new SelectOperationParser(lexer, new ComplexSymbolFactory());
 
     @DisplayName("test SelectOperatorInfoParser.parse method with arithmetic ops")
     @Test
@@ -51,7 +51,7 @@ class SelectOperatorInfoParserTest {
         String testCase = "or(ge(db.table.col1, 2), not(in(db.table.col3, \"3\", \"2\")))";
         SelectResult result = parser.parseSelectOperatorInfo(testCase);
         result.getColumn("db.table.col1").setValue(1);
-        result.getColumn("db.table.col3").setValue(5);
+        result.getColumn("db.table.col3").setValue("5");
         assertTrue(result.getCondition().evaluate());
     }
 

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ecnu.db</groupId>
-    <artifactId>sql-operator-evaluation</artifactId>
+    <artifactId>sql-operation-evaluation</artifactId>
     <version>0.1</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -92,12 +92,12 @@
                 <version>11b-20160615</version>
                 <executions>
                     <execution>
-                        <id>SelectOperatorInfoParser</id>
+                        <id>SelectOperationInfoParser</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <className>SelectOperatorInfoParser</className>
+                            <className>SelectOperationParser</className>
                             <symbolsName>SelectSymbol</symbolsName>
                             <packageName>ecnu.db.parser</packageName>
                             <cupDefinition>src/main/resources/select_parser.cup</cupDefinition>
