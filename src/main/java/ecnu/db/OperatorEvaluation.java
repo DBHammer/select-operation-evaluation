@@ -7,7 +7,7 @@ import java_cup.runtime.ComplexSymbolFactory;
 
 import java.io.StringReader;
 
-public class SqlOperatorEvaluation {
+public class OperatorEvaluation {
     public static SelectResult getEvaluation(String expression) throws Exception {
         return new TidbSelectOperatorInfoParser(new TidbSelectOperatorInfoLexer(new StringReader("")),
                 new ComplexSymbolFactory()).parseSelectOperatorInfo(expression);
