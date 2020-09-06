@@ -79,10 +79,7 @@ public class UniVarFilterOperation extends AbstractFilterOperation {
                 return !parameters.get(0).getData().equals(value);
             case IN:
                 boolean ret = parameters.stream().map(Parameter::getData).collect(Collectors.toList()).contains(value);
-                if (hasNot) {
-                    ret = !ret;
-                }
-                return ret;
+                return (hasNot ^ ret);
             case LIKE:
                 String pattern = parameters.get(0).getData();
                 if (pattern.startsWith("%") && pattern.endsWith("%")) {
@@ -97,10 +94,7 @@ public class UniVarFilterOperation extends AbstractFilterOperation {
                 else {
                     ret = pattern.equals(value);
                 }
-                if (hasNot) {
-                    ret = !ret;
-                }
-                return ret;
+                return (hasNot ^ ret);
             default:
                 throw new UnsupportedOperationException();
         }
@@ -112,10 +106,7 @@ public class UniVarFilterOperation extends AbstractFilterOperation {
                 boolean ret = parameters.stream()
                         .map((param) -> LocalDateTime.parse(param.getData(), FMT))
                         .collect(Collectors.toList()).contains(value);
-                if (hasNot) {
-                    ret = !ret;
-                }
-                return ret;
+                return (hasNot ^ ret);
             case GT:
                 LocalDateTime dateTime = LocalDateTime.parse(parameters.get(0).getData(), FMT);
                 return value.compareTo(dateTime) > 0;
@@ -145,10 +136,7 @@ public class UniVarFilterOperation extends AbstractFilterOperation {
                 boolean ret = parameters.stream()
                         .map((param) -> Double.parseDouble(param.getData()))
                         .collect(Collectors.toList()).contains(value);
-                if (hasNot) {
-                    ret = !ret;
-                }
-                return ret;
+                return (hasNot ^ ret);
             case GT:
                 double db = Double.parseDouble(parameters.get(0).getData());
                 return value.compareTo(db) > 0;
@@ -178,10 +166,7 @@ public class UniVarFilterOperation extends AbstractFilterOperation {
                 boolean ret = parameters.stream()
                         .map((param) -> Integer.parseInt(param.getData()))
                         .collect(Collectors.toList()).contains(value);
-                if (hasNot) {
-                    ret = !ret;
-                }
-                return ret;
+                return (hasNot ^ ret);
             case GT:
                 int integer = Integer.parseInt(parameters.get(0).getData());
                 return value.compareTo(integer) > 0;
