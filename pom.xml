@@ -74,12 +74,25 @@
                 <version>1.8.2</version>
                 <executions>
                     <execution>
+                        <id>SelectLexer</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
                             <lexDefinitions>
                                 <definition>src/main/resources/select_lexer.jflex</definition>
+                            </lexDefinitions>
+                            <outputDirectory>src/main/java</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>ThorSelectLexer</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <lexDefinitions>
+                                <definition>src/main/resources/thor_select_lexer.jflex</definition>
                             </lexDefinitions>
                             <outputDirectory>src/main/java</outputDirectory>
                         </configuration>
@@ -101,6 +114,19 @@
                             <symbolsName>SelectSymbol</symbolsName>
                             <packageName>ecnu.db.parser</packageName>
                             <cupDefinition>src/main/resources/select_parser.cup</cupDefinition>
+                            <outputDirectory>src/main/java</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>ThorSelectOperationInfoParser</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <className>ThorSelectOperationParser</className>
+                            <symbolsName>ThorSelectSymbol</symbolsName>
+                            <packageName>ecnu.db.parser</packageName>
+                            <cupDefinition>src/main/resources/thor_select_parser.cup</cupDefinition>
                             <outputDirectory>src/main/java</outputDirectory>
                         </configuration>
                     </execution>
