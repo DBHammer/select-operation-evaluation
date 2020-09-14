@@ -94,8 +94,8 @@ bool_expr ::=
 logical_expr ::=
         bool_expr:l OR bool_expr:r                          {:
                                                                 OrNode node = new OrNode();
-                                                                node.setLeftNode(l);
-                                                                node.setRightNode(r);
+                                                                node.addChild(l);
+                                                                node.addChild(r);
                                                                 RESULT = node;
                                                             :}
         | bool_expr:l AND bool_expr:r                       {:

@@ -1,5 +1,6 @@
 package ecnu.db.constraintchain.filter.logical;
 
+import ecnu.db.ColumnNotSetException;
 import ecnu.db.constraintchain.filter.BoolExprNode;
 import ecnu.db.constraintchain.filter.BoolExprType;
 
@@ -21,7 +22,7 @@ public class LogicalNotNode implements BoolExprNode {
         return type;
     }
 
-    public boolean evaluate() {
+    public boolean evaluate() throws ColumnNotSetException {
         return !expr.evaluate();
     }
 

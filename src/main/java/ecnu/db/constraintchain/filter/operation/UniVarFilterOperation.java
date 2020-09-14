@@ -1,5 +1,6 @@
 package ecnu.db.constraintchain.filter.operation;
 
+import ecnu.db.ColumnNotSetException;
 import ecnu.db.constraintchain.arithmetic.value.ColumnNode;
 import ecnu.db.constraintchain.filter.BoolExprType;
 import ecnu.db.constraintchain.filter.Parameter;
@@ -49,10 +50,10 @@ public class UniVarFilterOperation extends AbstractFilterOperation {
     }
 
     @Override
-    public boolean evaluate() {
+    public boolean evaluate() throws ColumnNotSetException {
         Object value = columnNode.getValue();
         if (value == null) {
-            throw new UnsupportedOperationException();
+            throw new ColumnNotSetException();
         }
         if (value instanceof String) {
             return evaluateString((String) value);

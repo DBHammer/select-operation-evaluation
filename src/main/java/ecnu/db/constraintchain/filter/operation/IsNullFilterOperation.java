@@ -1,5 +1,6 @@
 package ecnu.db.constraintchain.filter.operation;
 
+import ecnu.db.ColumnNotSetException;
 import ecnu.db.constraintchain.arithmetic.value.ColumnNode;
 import ecnu.db.constraintchain.filter.BoolExprType;
 

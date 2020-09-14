@@ -1,5 +1,6 @@
 package ecnu.db.constraintchain.filter.operation;
 
+import ecnu.db.ColumnNotSetException;
 import ecnu.db.constraintchain.arithmetic.ArithmeticNode;
 import ecnu.db.constraintchain.filter.BoolExprType;
 import ecnu.db.constraintchain.filter.Parameter;
@@ -27,7 +28,7 @@ public class MultiVarFilterOperation extends AbstractFilterOperation {
     }
 
     @Override
-    public boolean evaluate() {
+    public boolean evaluate() throws ColumnNotSetException {
         double val = arithmeticTree.evaluate();
         switch (operator) {
             case GT:
