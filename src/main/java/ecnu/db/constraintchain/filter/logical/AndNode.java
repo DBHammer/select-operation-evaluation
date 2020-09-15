@@ -1,5 +1,6 @@
 package ecnu.db.constraintchain.filter.logical;
 
+import ecnu.db.ColumnNotSetException;
 import ecnu.db.constraintchain.filter.BoolExprNode;
 import ecnu.db.constraintchain.filter.BoolExprType;
 import java.util.LinkedList;
@@ -24,10 +25,13 @@ public class AndNode implements BoolExprNode {
         return type;
     }
 
-    public boolean evaluate() {
-        return children.stream()
-                .map(BoolExprNode::evaluate)
-                .reduce(true, (expr1, expr2) -> (expr1 & expr2));
+    public boolean evaluate() throws ColumnNotSetException {
+        for (BoolExprNode child : children) {
+            if (!child.evaluate()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void setType(BoolExprType type) {

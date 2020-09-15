@@ -1,5 +1,6 @@
 package ecnu.db.constraintchain.arithmetic.value;
 
+import ecnu.db.ColumnNotSetException;
 import ecnu.db.constraintchain.arithmetic.ArithmeticNode;
 import ecnu.db.constraintchain.arithmetic.ArithmeticNodeType;
 import ecnu.db.constraintchain.filter.Parameter;
@@ -19,10 +20,10 @@ public class ColumnNode extends ArithmeticNode {
         super(ArithmeticNodeType.COLUMN);
     }
 
-    public ColumnNode(String columnName, String tableName) {
+    public ColumnNode(String tableName, String columnName) {
         super(ArithmeticNodeType.COLUMN);
-        this.columnName = columnName;
         this.canonicalTableName = tableName;
+        this.columnName = columnName;
     }
 
     public String getColumnName() {
@@ -55,7 +56,10 @@ public class ColumnNode extends ArithmeticNode {
     }
 
     @Override
-    public double evaluate() {
+    public double evaluate() throws ColumnNotSetException {
+        if (value == null) {
+            throw new ColumnNotSetException();
+        }
         return (double) ((Integer) value);
     }
 }

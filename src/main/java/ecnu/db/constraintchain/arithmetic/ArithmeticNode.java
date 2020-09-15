@@ -1,5 +1,7 @@
 package ecnu.db.constraintchain.arithmetic;
 
+import ecnu.db.ColumnNotSetException;
+
 /**
  * @author wangqingshuai
  */
@@ -36,5 +38,5 @@ public abstract class ArithmeticNode {
         this.rightNode = rightNode;
     }
 
-    abstract public double evaluate();
+    abstract public double evaluate() throws ColumnNotSetException;
 }

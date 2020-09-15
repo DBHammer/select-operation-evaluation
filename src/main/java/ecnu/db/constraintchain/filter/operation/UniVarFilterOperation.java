@@ -1,5 +1,6 @@
 package ecnu.db.constraintchain.filter.operation;
 
+import ecnu.db.ColumnNotSetException;
 import ecnu.db.constraintchain.arithmetic.value.ColumnNode;
 import ecnu.db.constraintchain.filter.BoolExprType;
 import ecnu.db.constraintchain.filter.Parameter;
@@ -49,10 +50,10 @@ public class UniVarFilterOperation extends AbstractFilterOperation {
     }
 
     @Override
-    public boolean evaluate() {
+    public boolean evaluate() throws ColumnNotSetException {
         Object value = columnNode.getValue();
         if (value == null) {
-            throw new UnsupportedOperationException();
+            throw new ColumnNotSetException();
         }
         if (value instanceof String) {
             return evaluateString((String) value);
@@ -79,10 +80,7 @@ public class UniVarFilterOperation extends AbstractFilterOperation {
                 return !parameters.get(0).getData().equals(value);
             case IN:
                 boolean ret = parameters.stream().map(Parameter::getData).collect(Collectors.toList()).contains(value);
-                if (hasNot) {
-                    ret = !ret;
-                }
-                return ret;
+                return (hasNot ^ ret);
             case LIKE:
                 String pattern = parameters.get(0).getData();
                 if (pattern.startsWith("%") && pattern.endsWith("%")) {
@@ -97,10 +95,7 @@ public class UniVarFilterOperation extends AbstractFilterOperation {
                 else {
                     ret = pattern.equals(value);
                 }
-                if (hasNot) {
-                    ret = !ret;
-                }
-                return ret;
+                return (hasNot ^ ret);
             default:
                 throw new UnsupportedOperationException();
         }
@@ -112,10 +107,7 @@ public class UniVarFilterOperation extends AbstractFilterOperation {
                 boolean ret = parameters.stream()
                         .map((param) -> LocalDateTime.parse(param.getData(), FMT))
                         .collect(Collectors.toList()).contains(value);
-                if (hasNot) {
-                    ret = !ret;
-                }
-                return ret;
+                return (hasNot ^ ret);
             case GT:
                 LocalDateTime dateTime = LocalDateTime.parse(parameters.get(0).getData(), FMT);
                 return value.compareTo(dateTime) > 0;
@@ -145,10 +137,7 @@ public class UniVarFilterOperation extends AbstractFilterOperation {
                 boolean ret = parameters.stream()
                         .map((param) -> Double.parseDouble(param.getData()))
                         .collect(Collectors.toList()).contains(value);
-                if (hasNot) {
-                    ret = !ret;
-                }
-                return ret;
+                return (hasNot ^ ret);
             case GT:
                 double db = Double.parseDouble(parameters.get(0).getData());
                 return value.compareTo(db) > 0;
@@ -178,10 +167,7 @@ public class UniVarFilterOperation extends AbstractFilterOperation {
                 boolean ret = parameters.stream()
                         .map((param) -> Integer.parseInt(param.getData()))
                         .collect(Collectors.toList()).contains(value);
-                if (hasNot) {
-                    ret = !ret;
-                }
-                return ret;
+                return (hasNot ^ ret);
             case GT:
                 int integer = Integer.parseInt(parameters.get(0).getData());
                 return value.compareTo(integer) > 0;

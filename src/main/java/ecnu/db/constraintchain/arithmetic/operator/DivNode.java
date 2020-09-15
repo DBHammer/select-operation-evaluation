@@ -1,5 +1,6 @@
 package ecnu.db.constraintchain.arithmetic.operator;
 
+import ecnu.db.ColumnNotSetException;
 import ecnu.db.constraintchain.arithmetic.ArithmeticNode;
 import ecnu.db.constraintchain.arithmetic.ArithmeticNodeType;
 
@@ -20,7 +21,7 @@ public class DivNode extends ArithmeticNode {
     }
 
     @Override
-    public double evaluate() {
+    public double evaluate() throws ColumnNotSetException {
         double leftValue = leftNode.evaluate(), rightValue = rightNode.evaluate();
         return leftValue / rightValue;
     }
