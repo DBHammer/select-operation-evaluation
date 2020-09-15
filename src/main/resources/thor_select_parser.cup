@@ -21,13 +21,10 @@ parser code {:
   private Map<String, ColumnNode> columns;
   private String tableName;
   private int parameterId = 0;
-  public void setTableName(String tableName) {
-    this.tableName = tableName;
-  }
-  public SelectResult parseSelectOperatorInfo(String operatorInfo) throws Exception {
+  public SelectResult parseSelectOperatorInfo(String operatorInfo, String tableName) throws Exception {
     this.parameters = new ArrayList<>();
     this.columns = new HashMap<>();
-    this.tableName = null;
+    this.tableName = tableName;
     this.root = new AndNode();
     ((ThorSelectOperationLexer) this.getScanner()).yyreset(new StringReader(operatorInfo));
     this.parse();
@@ -184,7 +181,7 @@ like_compare_expr ::=
                                                                                       Parameter parameter = new Parameter(parameterId++, param);
                                                                                       operation.addParameter(parameter);
                                                                                       parameters.add(parameter);
-                                                                                      columns.put(col, columnNode);
+                                                                                      columns.put(canonicalColumnName, columnNode);
                                                                                       RESULT = operation;
                                                                                   :}
         ;
@@ -201,7 +198,7 @@ between_compare_expr ::=
                                                                                       lessOperation.addParameter(rightParam);
                                                                                       parameters.add(leftParam);
                                                                                       parameters.add(rightParam);
-                                                                                      columns.put(col, columnNode);
+                                                                                      columns.put(canonicalColumnName, columnNode);
                                                                                       AndNode node = new AndNode();
                                                                                       node.addChild(lessOperation);
                                                                                       node.addChild(greaterOperation);
@@ -215,7 +212,7 @@ isnull_expr ::=
                                                                                       String[] columnNames = canonicalColumnName.split("\\.");
                                                                                       ColumnNode columnNode = new ColumnNode(columnNames[0], columnNames[1]);
                                                                                       IsNullFilterOperation operation = new IsNullFilterOperation(columnNode);
-                                                                                      columns.put(col, columnNode);
+                                                                                      columns.put(canonicalColumnName, columnNode);
                                                                                       RESULT = operation;
                                                                                   :}
         ;

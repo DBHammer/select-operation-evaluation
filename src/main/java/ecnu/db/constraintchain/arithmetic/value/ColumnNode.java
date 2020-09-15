@@ -20,10 +20,10 @@ public class ColumnNode extends ArithmeticNode {
         super(ArithmeticNodeType.COLUMN);
     }
 
-    public ColumnNode(String columnName, String tableName) {
+    public ColumnNode(String tableName, String columnName) {
         super(ArithmeticNodeType.COLUMN);
-        this.columnName = columnName;
         this.canonicalTableName = tableName;
+        this.columnName = columnName;
     }
 
     public String getColumnName() {
