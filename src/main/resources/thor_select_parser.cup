@@ -29,7 +29,7 @@ parser code {:
     this.columns = new HashMap<>();
     this.tableName = null;
     this.root = new AndNode();
-    ((SelectOperationLexer) this.getScanner()).yyreset(new StringReader(operatorInfo));
+    ((ThorSelectOperationLexer) this.getScanner()).yyreset(new StringReader(operatorInfo));
     this.parse();
     SelectResult result = new SelectResult();
     result.setParameters(this.parameters);
@@ -49,28 +49,27 @@ parser code {:
 /* Terminals (tokens returned by the scanner. */
 terminal                         LPAREN, RPAREN;
 terminal                         ISNULL;
+terminal                         BETWEEN;
 terminal                         OR;
 terminal                         AND;
 terminal                         NOT;
 terminal                         LT, GT, LE, GE, NE, EQ, LIKE, IN;
-terminal   Integer               INTEGER;
-terminal   String                STRING;
-terminal   String                DATETIME;
+terminal   String                PARAM;
 terminal   String                COLUMN;
-terminal   Float                 FLOAT;
 
 /* Non terminals */
+non terminal                                    expr;
 non terminal          BoolExprNode              bool_expr;
 non terminal          BoolExprNode              logical_expr;
 non terminal          AbstractFilterOperation   compare_expr;
 non terminal          AbstractFilterOperation   uni_compare_expr;
 non terminal          CompareOperator           uni_compare_operator;
-non terminal          String                    uni_compare_constant;
 non terminal          UniVarFilterOperation     in_compare_expr;
 non terminal          String                    in_argument;
 non terminal          List<String>              in_arguments;
 non terminal          UniVarFilterOperation     like_compare_expr;
 non terminal          IsNullFilterOperation     isnull_expr;
+non terminal          AndNode                   between_compare_expr;
 
 /* precedence */
 precedence left         OR;
@@ -78,15 +77,20 @@ precedence left         AND;
 precedence nonassoc     NOT;
 
 /* start with */
-start with bool_expr;
+start with expr;
 
 /* ================= */
 /* The grammar rules */
 /* ================= */
+expr      ::=
+        bool_expr:e                              {:  this.parser.root.addChild(e);  :}
+        ;
+
 bool_expr ::=
         logical_expr:e                           {:  RESULT = e;  :}
         | compare_expr:e                         {:  RESULT = e;  :}
         | isnull_expr:e                          {:  RESULT = e;  :}
+        | between_compare_expr:e                 {:  RESULT=e;  :}
         ;
 
 /* logical expressions */
@@ -119,14 +123,14 @@ compare_expr ::=
         | like_compare_expr:e                                {:  RESULT=e;  :}
         ;
 uni_compare_expr ::=
-        COLUMN:column uni_compare_operator:op uni_compare_constant:constant                    {:
+        COLUMN:column uni_compare_operator:op PARAM:param                                       {:
                                                                                                     AbstractFilterOperation operation;
                                                                                                     String canonicalColumnName = getCanonicalColumn(column);
                                                                                                     String[] columnNames = canonicalColumnName.split("\\.");
                                                                                                     ColumnNode node = new ColumnNode(columnNames[0], columnNames[1]);
                                                                                                     operation = new UniVarFilterOperation(node, op);
                                                                                                     columns.put(canonicalColumnName, node);
-                                                                                                    Parameter parameter = new Parameter(parameterId++, constant);
+                                                                                                    Parameter parameter = new Parameter(parameterId++, param);
                                                                                                     operation.addParameter(parameter);
                                                                                                     parameters.add(parameter);
                                                                                                     RESULT = operation;
@@ -139,12 +143,6 @@ uni_compare_operator ::=
         | GE:ge                                                  {:  RESULT = CompareOperator.GE;  :}
         | EQ:eq                                                  {:  RESULT = CompareOperator.EQ;  :}
         | NE:ne                                                  {:  RESULT = CompareOperator.NE;  :}
-        ;
-uni_compare_constant ::=
-        INTEGER:num                                              {:  RESULT = num.toString();  :}
-        | FLOAT:num                                              {:  RESULT = num.toString();  :}
-        | DATETIME:datetime                                      {:  RESULT = datetime;  :}
-        | STRING:str                                             {:  RESULT = str; :}
         ;
 in_compare_expr ::=
         COLUMN:col IN LPAREN in_arguments:arguments RPAREN      {:
@@ -162,48 +160,57 @@ in_compare_expr ::=
                                                                                   :}
         ;
 in_argument  ::=
-        STRING:str                                                                {:
-                                                                                      RESULT = str;
-                                                                                  :}
-        | DATETIME:datetime                                                       {:
-                                                                                      RESULT = datetime;
-                                                                                  :}
-        | INTEGER:integer                                                         {:
-                                                                                      RESULT = integer.toString();
-                                                                                  :}
-        | FLOAT:float_                                                            {:
-                                                                                      RESULT = float_.toString();
+        PARAM:param                                                               {:
+                                                                                      RESULT = param;
                                                                                   :}
         ;
 in_arguments ::=
-        in_argument:argument                                                      {:
+        PARAM:param                                                               {:
                                                                                       List<String> arguments = new ArrayList<>();
-                                                                                      arguments.add(argument);
+                                                                                      arguments.add(param);
                                                                                       RESULT = arguments;
                                                                                   :}
-        | in_arguments:e1 in_argument:argument                                    {:
-                                                                                      e1.add(argument);
+        | in_arguments:e1 PARAM:param                                             {:
+                                                                                      e1.add(param);
                                                                                       RESULT = e1;
                                                                                   :}
         ;
 like_compare_expr ::=
-         COLUMN:col LIKE:like STRING:str                                          {:
+         COLUMN:col LIKE PARAM:param                                              {:
                                                                                       String canonicalColumnName = getCanonicalColumn(col);
                                                                                       String[] columnNames = canonicalColumnName.split("\\.");
                                                                                       ColumnNode columnNode = new ColumnNode(columnNames[0], columnNames[1]);
                                                                                       UniVarFilterOperation operation = new UniVarFilterOperation(columnNode, CompareOperator.LIKE);
-                                                                                      Parameter parameter = new Parameter(parameterId++, str);
+                                                                                      Parameter parameter = new Parameter(parameterId++, param);
                                                                                       operation.addParameter(parameter);
                                                                                       parameters.add(parameter);
                                                                                       columns.put(col, columnNode);
                                                                                       RESULT = operation;
                                                                                   :}
         ;
-
-
+between_compare_expr ::=
+         COLUMN:col BETWEEN PARAM:lparam AND PARAM:rparam                         {:
+                                                                                      String canonicalColumnName = getCanonicalColumn(col);
+                                                                                      String[] columnNames = canonicalColumnName.split("\\.");
+                                                                                      ColumnNode columnNode = new ColumnNode(columnNames[0], columnNames[1]);
+                                                                                      UniVarFilterOperation greaterOperation = new UniVarFilterOperation(columnNode, CompareOperator.GE);
+                                                                                      Parameter leftParam = new Parameter(parameterId++, lparam);
+                                                                                      greaterOperation.addParameter(leftParam);
+                                                                                      UniVarFilterOperation lessOperation = new UniVarFilterOperation(columnNode, CompareOperator.LE);
+                                                                                      Parameter rightParam = new Parameter(parameterId++, rparam);
+                                                                                      lessOperation.addParameter(rightParam);
+                                                                                      parameters.add(leftParam);
+                                                                                      parameters.add(rightParam);
+                                                                                      columns.put(col, columnNode);
+                                                                                      AndNode node = new AndNode();
+                                                                                      node.addChild(lessOperation);
+                                                                                      node.addChild(greaterOperation);
+                                                                                      RESULT = node;
+                                                                                  :}
+         ;
 /* isnull expressions */
 isnull_expr ::=
-        ISNULL:isnull LPAREN COLUMN:col RPAREN                      {:
+        ISNULL:isnull COLUMN:col                                                  {:
                                                                                       String canonicalColumnName = getCanonicalColumn(col);
                                                                                       String[] columnNames = canonicalColumnName.split("\\.");
                                                                                       ColumnNode columnNode = new ColumnNode(columnNames[0], columnNames[1]);

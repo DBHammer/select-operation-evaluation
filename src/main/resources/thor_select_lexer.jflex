@@ -4,6 +4,7 @@ import ecnu.db.constraintchain.Token;
 import java_cup.runtime.*;
 import ecnu.db.constraintchain.arithmetic.ArithmeticNodeType;
 import ecnu.db.constraintchain.filter.operation.CompareOperator;
+import java_cup.runtime.ComplexSymbolFactory;
 %%
 
 %public
@@ -16,11 +17,13 @@ UnsupportedOperationException
 %{
   private StringBuilder str_buff = new StringBuilder();
   private Symbol symbol(int type) {
-    return new Token(type, yycolumn+1);
+     return new ComplexSymbolFactory.ComplexSymbol(ThorSelectSymbol.terminalNames[type].toLowerCase(), type,
+        new ComplexSymbolFactory.Location(1, yycolumn + 1), new ComplexSymbolFactory.Location(1, yycolumn + 1), null);
   }
 
   private Symbol symbol(int type, Object value) {
-    return new Token(type, yycolumn+1, value);
+     return new ComplexSymbolFactory.ComplexSymbol(ThorSelectSymbol.terminalNames[type].toLowerCase(), type,
+        new ComplexSymbolFactory.Location(1, yycolumn + 1), new ComplexSymbolFactory.Location(1, yycolumn + 1), value);
   }
 
   public void init() {
@@ -37,38 +40,38 @@ UnsupportedOperationException
 %cup
 
 /* tokens */
-AND_SYM=((and)|(AND))
-OR_SYM=((or)|(OR))
-BET_SYM=((BETWEEN)|(between))
-IN_SYM=((in)|(IN))
-LIKE_SYM=((like)|(LIKE))
-ISNULL_SYM=((isnull)|(ISNULL))
-NOT_SYM=((not)|(NOT))
-DIGIT=[0-9]
+AND_SYM=(and|AND)
+OR_SYM=(or|OR)
+BET_SYM=(BETWEEN|between)
+IN_SYM=(in|IN)
+LIKE_SYM=(like|LIKE)
+ISNULL_SYM=(isnull|ISNULL)
+NOT_SYM=(not|NOT)
 WHITE_SPACE_CHAR=[\n\r\ \t\b\012]
 SCHEMA_NAME_CHAR=[A-Za-z0-9$_]
 COLUMN=(({SCHEMA_NAME_CHAR})+\.({SCHEMA_NAME_CHAR})+)|(({SCHEMA_NAME_CHAR})+)
-FLOAT='(0|([1-9]({DIGIT}*)))\.({DIGIT}*)'
-INTEGER='(0|[1-9]({DIGIT}*))'
-DATETIME='({DIGIT}{4}-{DIGIT}{2}-{DIGIT}{2} {DIGIT}{2}:{DIGIT}{2}:{DIGIT}{2}\.{DIGIT}{3})'
+PARAM='[^\n\r\'\\]+'
 
 %%
 
 <YYINITIAL> {
   /* logical operators */
-  AND_SYM {
+  {AND_SYM} {
     return symbol(AND);
   }
-  OR_SYM {
+  {OR_SYM} {
     return symbol(OR);
   }
 
   /* compare operators */
-  IN_SYM {
+  {IN_SYM} {
     return symbol(IN);
   }
-  LIKE_SYM {
+  {LIKE_SYM} {
     return symbol(LIKE);
+  }
+  {BET_SYM} {
+    return symbol(BETWEEN);
   }
   "<" {
     return symbol(LT);
@@ -90,12 +93,12 @@ DATETIME='({DIGIT}{4}-{DIGIT}{2}-{DIGIT}{2} {DIGIT}{2}:{DIGIT}{2}:{DIGIT}{2}\.{D
   }
 
   /* not operators */
-  NOT_SYM {
+  {NOT_SYM} {
     return symbol(NOT);
   }
 
   /* isnull operators */
-  ISNULL_SYM {
+  {ISNULL_SYM} {
     return symbol(ISNULL);
   }
 
@@ -105,16 +108,9 @@ DATETIME='({DIGIT}{4}-{DIGIT}{2}-{DIGIT}{2} {DIGIT}{2}:{DIGIT}{2}:{DIGIT}{2}\.{D
   }
 
   /* constants */
-  {DATETIME} {
-    return symbol(DATETIME, yytext());
-  }
-  {FLOAT} {
+  {PARAM} {
     String val = yytext();
-    return symbol(FLOAT, Float.valueOf(val.substring(1, val.length() - 1)));
-  }
-  {INTEGER} {
-    String val = yytext();
-    return symbol(INTEGER, Integer.valueOf(val.substring(1, val.length() - 1)));
+    return symbol(PARAM, val.substring(1, val.length() - 1));
   }
 
   /* delimiters */
@@ -130,24 +126,6 @@ DATETIME='({DIGIT}{4}-{DIGIT}{2}-{DIGIT}{2} {DIGIT}{2}:{DIGIT}{2}:{DIGIT}{2}\.{D
   \) {
      return symbol(RPAREN);
   }
-
-  /* string start */
-  "'" {
-    str_buff.setLength(0); yybegin(STRING_LITERAL);
-  }
-
-}
-<STRING_LITERAL> {
-  "'" {
-    yybegin(YYINITIAL);
-    return symbol(STRING, str_buff.toString());
-  }
-  [^\n\r\"\\]+                   { str_buff.append( yytext() ); }
-  \\t                            { str_buff.append('\t'); }
-  \\n                            { str_buff.append('\n'); }
-  \\r                            { str_buff.append('\r'); }
-  \\\"                           { str_buff.append('\"'); }
-  \\                             { str_buff.append('\\'); }
 }
 
 <<EOF>>                          { return symbol(EOF); }
